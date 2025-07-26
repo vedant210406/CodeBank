@@ -1,0 +1,130 @@
+import java.util.*;
+
+public class Main {
+    static Scanner scanner = new Scanner(System.in);
+    static Map<String, String> users = new HashMap<>();
+    static Map<String, Double> balances = new HashMap<>();
+    static String currentUser = null;
+
+    public static void main(String[] args) {
+        int choice;
+
+        do {
+            System.out.println("\n--- Welcome to Java Bank ---");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    register();
+                    break;
+                case 2:
+                    if (login()) {
+                        dashboard();
+                    }
+                    break;
+                case 3:
+                    System.out.println("Thank you! Visit again.");
+                    break;
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        } while (choice != 3);
+    }
+
+    private static void register() {
+        System.out.print("Enter new username: ");
+        String username = scanner.next();
+        if (users.containsKey(username)) {
+            System.out.println("Username already exists.");
+            return;
+        }
+
+        System.out.print("Enter new password: ");
+        String password = scanner.next();
+        users.put(username, password);
+        balances.put(username, 0.0);
+        System.out.println("Registered successfully!");
+    }
+
+    private static boolean login() {
+        System.out.print("Enter username: ");
+        String username = scanner.next();
+
+        System.out.print("Enter password: ");
+        String password = scanner.next();
+
+        if (users.containsKey(username) && users.get(username).equals(password)) {
+            currentUser = username;
+            System.out.println("Login successful. Welcome, " + currentUser + "!");
+            return true;
+        } else {
+            System.out.println("Invalid credentials.");
+            return false;
+        }
+    }
+
+    private static void dashboard() {
+        int choice;
+        do {
+            System.out.println("\n--- Bank Dashboard ---");
+            System.out.println("1. Check Balance");
+            System.out.println("2. Deposit");
+            System.out.println("3. Withdraw");
+            System.out.println("4. Logout");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    checkBalance();
+                    break;
+                case 2:
+                    deposit();
+                    break;
+                case 3:
+                    withdraw();
+                    break;
+                case 4:
+                    System.out.println("Logged out.");
+                    currentUser = null;
+                    break;
+                default:
+                    System.out.println("Invalid option.");
+            }
+        } while (choice != 4);
+    }
+
+    private static void checkBalance() {
+        System.out.printf("Current Balance: ₹%.2f\n", balances.get(currentUser));
+    }
+
+    private static void deposit() {
+        System.out.print("Enter amount to deposit: ₹");
+        double amount = scanner.nextDouble();
+        if (amount > 0) {
+            balances.put(currentUser, balances.get(currentUser) + amount);
+            System.out.println("Amount deposited successfully.");
+        } else {
+            System.out.println("Invalid amount.");
+        }
+    }
+
+    private static void withdraw() {
+        System.out.print("Enter amount to withdraw: ₹");
+        double amount = scanner.nextDouble();
+        double currentBalance = balances.get(currentUser);
+
+        if (amount > 0 && amount <= currentBalance) {
+            balances.put(currentUser, currentBalance - amount);
+            System.out.println("Amount withdrawn successfully.");
+        } else if (amount > currentBalance) {
+            System.out.println("Insufficient balance.");
+        } else {
+            System.out.println("Invalid amount.");
+        }
+    }
+}
